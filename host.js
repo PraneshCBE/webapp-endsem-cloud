@@ -2,7 +2,6 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { exec } = require("child_process");
-    const fs = require("fs");
     const AWS = require("aws-sdk");
     AWS.config.update({
       accessKeyId: "ASIAQKT2CDD6X73UC2OT",
