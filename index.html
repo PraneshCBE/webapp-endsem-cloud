@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Secure Payment Info</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="password"] {
+      width: calc(100% - 20px);
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    input[type="submit"] {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <form id = "paymentForm" onsubmit="submitForm(event)">
+    <h1>Secure Payment Info</h1>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="cardNumber">Card Number:</label>
+    <input type="number" id="cardNumber" name="cardno" required>
+
+    <label for="expirationDate">Expiration Date:</label>
+    <input type="date" id="expirationDate" name="date" required>
+
+    <label for="securityCode">Security Code:</label>
+    <input type="password" id="securityCode" name="sec" required>
+
+    <input type="submit" value="Submit">
+  </form>
+
+  <div id="response"></div>
+</body>
+<script>
+     function formatDate(date) {
+      const year = date.getFullYear();
+      const month = `${date.getMonth() + 1}`.padStart(2, '0');
+      const day = `${date.getDate()}`.padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    function submitForm(event) {
+      event.preventDefault();
+
+      const form = document.getElementById('paymentForm');
+      const formData = new FormData(form);
+
+        const payload = {
+            name:formData.get('name'),
+            cardno:formData.get('cardno'),
+            date:formatDate(new Date(formData.get('date'))),
+            sec:formData.get('sec')
+        }
+      console.log(payload);
+
+      const gcfInvokeURL = 'https://us-central1-cloud-computing-class-397505.cloudfunctions.net/function-1';
+
+      fetch(gcfInvokeURL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('GCF function response:', data);
+        document.getElementById('response').innerHTML = JSON.stringify(data);
+        // Handle success or display a message to the user
+      })
+      .catch(error => {
+        console.error('Error submitting form:', error);
+        // Handle error or display an error message to the user
+      });
+    }
+  </script>
+</html>
