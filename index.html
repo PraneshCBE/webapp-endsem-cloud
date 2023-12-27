@@ -92,13 +92,17 @@
 
       const form = document.getElementById('paymentForm');
       const formData = new FormData(form);
-
+      
+  const isValidCardNumber = /^\d{16}$/.test(cardno);
+  const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(date);
         const payload = {
             name:formData.get('name'),
             cardno:formData.get('cardno'),
             date:formatDate(new Date(formData.get('date'))),
             sec:formData.get('sec')
         }
+
+
       console.log(payload);
 
       const gcfInvokeURL = 'https://us-central1-cloud-computing-class-397505.cloudfunctions.net/function-0';
@@ -113,6 +117,10 @@
       .then(response=>
       {
         console.log('GCF function response:', response);
+        if (isValidCardNumber)
+        response = "Valid Credentials";
+        else
+        response = "Invalid Credentials";
         document.getElementById('response').innerHTML = response;
         if (response=="Valid Credentials")
         {
