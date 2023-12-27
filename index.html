@@ -110,11 +110,26 @@
           'Content-Type': 'application/json'
         }
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log('GCF function response:', data);
-        document.getElementById('response').innerHTML = JSON.stringify(data);
-        // Handle success or display a message to the user
+      .then(response=>
+      {
+        console.log('GCF function response:', response);
+        document.getElementById('response').innerHTML = response;
+        if (response=="Valid Credentials")
+        {
+          fetch('/backup', { method: 'GET' }) // Sending a GET request to the '/restore' endpoint
+        .then(response => {
+          console.log('Restore endpoint called:', response);
+          // Display a message or handle response here if needed
+          //backup initiated response with restore button
+          document.getElementById('response').innerHTML = "<html><body><h1>Backup Initiated</h1><button onclick='restore()'>Restore</button></body></html>";
+        })
+        .catch(error => {
+          console.error('Error triggering restore:', error);
+          // Handle error or display an error message to the user
+          document.getElementById('response').innerHTML = 'Error initiating restore';
+        });
+        }
+      
       })
       .catch(error => {
         console.error('Error submitting form:', error);
